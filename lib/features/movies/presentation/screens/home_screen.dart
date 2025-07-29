@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_app_flutter/features/movies/presentation/widgets/movie_card.dart';
 import '../../presentation/providers/movie_providers.dart';
+import 'package:movie_app_flutter/features/auth/presentation/providers/auth_providers.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -11,7 +12,18 @@ class HomeScreen extends ConsumerWidget {
     final moviesAsyncValue = ref.watch(moviesFutureProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Peliculas Populares')),
+      appBar: AppBar(
+        title: const Text('Peliculas Populares'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Cerrar Sesion',
+            onPressed: () {
+              ref.read(authRepositoryProvider).signOut();
+            },
+          ),
+        ],
+      ),
       body: moviesAsyncValue.when(
         data: (movies) {
           return GridView.builder(
