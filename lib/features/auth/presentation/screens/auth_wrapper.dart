@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_app_flutter/features/auth/presentation/providers/auth_providers.dart';
 import 'package:movie_app_flutter/features/auth/presentation/screens/login_screen.dart';
-import 'package:movie_app_flutter/features/movies/presentation/screens/home_screen.dart';
+import 'package:movie_app_flutter/features/movies/presentation/screens/main_screen.dart';
 
 class AuthWrapper extends ConsumerWidget {
   const AuthWrapper({super.key});
@@ -14,7 +14,7 @@ class AuthWrapper extends ConsumerWidget {
     return authState.when(
       data: (user) {
         if (user != null) {
-          return const HomeScreen();
+          return const MainScreen();
         }
         return const LoginScreen();
       },

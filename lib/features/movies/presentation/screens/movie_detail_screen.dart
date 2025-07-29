@@ -1,17 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../providers/movie_providers.dart';
+import 'package:movie_app_flutter/features/watchlist/presentation/providers/watchlist_providers.dart';
 
 class MovieDetailScreen extends ConsumerWidget {
   final int movieId;
-
   const MovieDetailScreen({super.key, required this.movieId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final movieDetailAsyncValue = ref.watch(movieDetailProvider(movieId));
+    final watchlist = ref.watch(watchlistProvider);
+    final isMovieInWatchlist =
+        watchlist.asData?.value.any((movie) => movie.id == movieId) ?? false;
 
     return Scaffold(
+      floatingActionButton: movieDetailAsyncValue.when(
+        data: (movie) => FloatingActionButton(
+          onPressed: () {
+            final repository = ref.read(watchlistRepositoryProvider);
+            if (isMovieInWatchlist) {
+              repository.removeFromWatchlist(movieId);
+            } else {
+              repository.addToWatchlist(movie);
+            }
+          },
+          backgroundColor: isMovieInWatchlist
+              ? Colors.grey
+              : AppTheme.primaryColor,
+          child: Icon(
+            isMovieInWatchlist ? Icons.remove : Icons.add,
+            color: Colors.white,
+          ),
+        ),
+        loading: () => null,
+        error: (e, s) => null,
+      ),
       body: movieDetailAsyncValue.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err')),
